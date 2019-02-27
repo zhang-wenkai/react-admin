@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import PropTypes from 'prop-types'
 import {
   Form,
   Icon,
@@ -11,6 +12,9 @@ import {
 const Item = Form.Item
 
 class LoginForm extends Component {
+  static propTypes = {
+    login: PropTypes.func.isRequired
+  }
   // 自定义校验规则
   checkPassword = (rule, value, callback) => {
     // 校验不通过
@@ -31,16 +35,20 @@ class LoginForm extends Component {
     e.preventDefault()
     const {validateFields, resetFields} = this.props.form
     // 检查当前表单项是否通过校验
-    validateFields((error, values) => {
+    validateFields(async (error, values) => {
       if (!error) {
         // 校验通过
         console.log('收集的表单数据：', values)
+        const {username,password} = values
         // 发送ajax请求
+        // 调用父组件的login方法，由父组件负责去登录
+        this.props.login(username,password)
       } else {
         // 校验失败
         // 重置密码
         resetFields(['password'])
         // 收集错误信息
+
         /*
           Object.values(obj)：将对象中每一个值，添加到一个数组中并返回一个数组
           arr.reduce()：统计错误信息
