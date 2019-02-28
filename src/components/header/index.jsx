@@ -1,13 +1,49 @@
 import React, {Component} from 'react'
-import {Row,Col,Modal} from 'antd'
+import {Row,Col,Modal,message} from 'antd'
 import {withRouter} from 'react-router-dom'
+import dayjs from 'dayjs'
 
 import MemoryUtils from '../../utils/memoryUtils'
 import {removeItem} from '../../utils/storageUtils'
 import menuList from '../../config/menuConfig'
+import {reqWeather} from '../../api'
 import './index.less'
 
 class Header extends Component {
+  state = {
+    sysTime: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+    dayPictureUrl: 'http://api.map.baidu.com/images/weather/day/qing.png',
+    weather: '晴'
+  }
+  componentDidMount () {
+    this.updateTime()
+    this.getWeather()
+  }
+  // 更新时间
+  updateTime = () => {
+    this.timer = setInterval(() => {
+      this.setState({
+        sysTime: dayjs().format('YYYY-MM-DD HH:mm:ss')
+      })
+    }, 1000)
+  }
+  // 更新天气
+  getWeather = () => {
+    reqWeather('北京')
+      .then(res => {
+        this.setState({
+          dayPictureUrl: res.dayPictureUrl,
+          weather: res.weather
+        })
+      })
+      .catch(err => {
+        message.error(err)
+      })
+  }
+  componentWillUnmount () {
+    // 清除定时器
+    clearInterval(this.timer)
+  }
   // 退出登录的方法
   logOut = () => {
     Modal.confirm({
@@ -46,6 +82,8 @@ class Header extends Component {
     const {username} = MemoryUtils.user
     // 获取标题
     const title = this.getTitle(menuList)
+    // 获取天气
+    const {sysTime,dayPictureUrl,weather} = this.state
     return (
       <div className='header'>
         <Row className='header-top'>
@@ -54,7 +92,11 @@ class Header extends Component {
         </Row>
         <Row className='header-bottom'>
           <Col span={6} className='header-bottom-left'>{title}</Col>
-          <Col span={18} className='header-bottom-right'>时间 + 天气</Col>
+          <Col span={18} className='header-bottom-right'>
+            <span>{sysTime}</span>
+            <img src={dayPictureUrl} alt="天气"/>
+            <span>{weather}</span>
+          </Col>
         </Row>
       </div>
     )

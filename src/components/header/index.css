@@ -26,6 +26,10 @@
   border-right: 15px solid transparent;
 }
 .header .header-bottom .header-bottom-right {
-  padding: 5px;
+  padding: 5px 20px 5px 5px;
   text-align: right;
+}
+.header .header-bottom .header-bottom-right img {
+  width: 22px;
+  margin: 0 10px;
 }

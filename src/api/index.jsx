@@ -1,5 +1,6 @@
 // 定义发送请求的函数
 import ajax from './ajax'
+import jsonp from 'jsonp'
 
 // const prefix = 'http://localhost:5000'
 // 提取公共代码url地址，并通过webpake定义的环境变量process.env.NODE_ENV解决跨域
@@ -9,3 +10,20 @@ const prefix = process.env.NODE_ENV === 'development' ? '' : 'http://localhost:5
 export const reqLogin = (username,password) => ajax(prefix + '/login', {username, password}, 'POST')
 // 请求添加用户函数
 export const reqAddUser = user => ajax(prefix + '/manage/user/add', user, 'POST')
+// 请求天气的函数
+export const reqWeather = city => {
+  return new Promise((resolve,reject) => {
+    jsonp(`http://api.map.baidu.com/telematics/v3/weather?location=${city}&output=json&ak=3p49MVra6urFRGOT9s8UBWr2`,
+      {},
+      (err,data) => {
+        if(!err){
+          // 请求成功
+          resolve(data.results[0].weather_data[0])
+        }else{
+          // 请求失败
+          console.log('天气请求失败：',err)
+          reject('天气请求失败~')
+        }
+      })
+  })
+}
