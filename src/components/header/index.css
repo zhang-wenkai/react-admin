@@ -1,4 +1,31 @@
-.header {
-  height: 100px;
-  background: #eee;
+.header .header-top {
+  padding: 20px;
+  text-align: right;
+  border-bottom: 1px solid #1DA57A;
+}
+.header .header-top a {
+  margin-left: 50px;
+}
+.header .header-bottom {
+  display: flex;
+  align-items: center;
+}
+.header .header-bottom .header-bottom-left {
+  font-size: 18px;
+  padding: 5px 0;
+  text-align: center;
+}
+.header .header-bottom .header-bottom-left::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -15px;
+  transform: translateX(-50%);
+  border-top: 15px solid #fff;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+}
+.header .header-bottom .header-bottom-right {
+  padding: 5px;
+  text-align: right;
 }
