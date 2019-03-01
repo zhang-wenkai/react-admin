@@ -35,7 +35,7 @@ class AddCategoryForm extends Component {
             )
           }
         </Item>
-        <Item  label='分类名称'>
+        <Item label='分类名称'>
           {
             getFieldDecorator(
               'categoryName',
