@@ -1,9 +1,0 @@
-.admin {
-  height: 100%;
-}
-.admin > div {
-  height: 100%;
-}
-.admin > div .admin-main {
-  height: 550px;
-}

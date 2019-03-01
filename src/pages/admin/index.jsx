@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { Row, Col } from 'antd'
+import {Layout} from 'antd'
 
 import {Switch, Route, Redirect} from 'react-router-dom'
 
@@ -16,7 +16,7 @@ import Role from '../role'
 import User from '../user'
 import MemoryUtils from '../../utils/memoryUtils'
 
-import './index.less'
+const {Content,Sider} = Layout
 
 export default class Admin extends Component {
   render() {
@@ -28,28 +28,28 @@ export default class Admin extends Component {
       return <Redirect to='/login'/> // 在return方法中，返回值需要是一个组件或null
     }
     return (
-      <Row className='admin'>
-        <Col span={4}>
-          <LeftNav/>
-        </Col>
-        <Col span={20}>
-          <Header/>
-          <div className='admin-main'>
+      <Layout style={{minHeight: '100vh'}}>
+        <Sider>
+          <LeftNav />
+        </Sider>
+        <Layout >
+          <Header />
+          <Content style={{margin: 20}}>
             <Switch>
               <Route path='/home' component={Home}/>
               <Route path='/category' component={Category}/>
               <Route path='/product' component={Product}/>
-              <Route path='/charts/bar' component={Bar}/>
-              <Route path='/charts/line' component={Line}/>
-              <Route path='/charts/pie' component={Pie}/>
               <Route path='/role' component={Role}/>
               <Route path='/user' component={User}/>
+              <Route path='/charts/pie' component={Pie}/>
+              <Route path='/charts/line' component={Line}/>
+              <Route path='/charts/bar' component={Bar}/>
               <Redirect to='/home'/>
             </Switch>
-          </div>
-          <Footer/>
-        </Col>
-      </Row>
+          </Content>
+          <Footer />
+        </Layout>
+      </Layout>
     )
   }
 }
