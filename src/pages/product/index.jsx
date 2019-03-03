@@ -2,14 +2,16 @@ import React, {Component} from 'react'
 import {Card, Button, Icon, Table, Select, Input, message} from 'antd'
 
 import MyButton from '../../components/my-button'
-import {reqProductsList} from '../../api'
+import {reqProductsList, reqSearchProductsList} from '../../api'
 
 const Option = Select.Option
 
 export default class Index extends Component {
   state = {
     products: [],
-    total: 0
+    total: 0,
+    searchType: 'productName',
+    searchName: ''
   }
 
   componentWillMount () {
@@ -34,7 +36,7 @@ export default class Index extends Component {
         render: category => {
           return <div>
             <Button type='primary'>上架</Button>
-            &nbsp;&nbsp;
+            &nbsp&nbsp
             已下架
           </div>
         }
@@ -45,7 +47,7 @@ export default class Index extends Component {
         render: category => {
           return <div>
             <MyButton name='详情' onClick={() => {}}/>
-            &nbsp;&nbsp;
+            &nbsp&nbsp
             <MyButton name='修改' onClick={() => {}}/>
           </div>
         }
@@ -55,7 +57,16 @@ export default class Index extends Component {
 
   // 获取商品列表的方法
   getProducts = async (pageNum, pageSize) => {
-    const result = await reqProductsList(pageNum, pageSize)
+
+    // 获取表单项的值
+    const {searchName, searchType} = this.state
+    let result
+
+    if (searchName) {
+      result = await reqSearchProductsList({searchName, searchType, pageNum, pageSize})
+    } else {
+      result = await reqProductsList(pageNum, pageSize)
+    }
 
     if (result.status === 0) {
       this.setState({
@@ -71,18 +82,24 @@ export default class Index extends Component {
     this.getProducts(1, 5)
   }
 
+  handleChange = (name, value) => {
+    this.setState({
+      [name]: value
+    })
+  }
+
   render () {
     const {products,total} = this.state
     return (
       <Card
         title={
           <div>
-            <Select defaultValue='productName'>
+            <Select defaultValue='productName'  onChange={value => this.handleChange('searchType', value)}>
               <Option value='productName'>根据商品名称</Option>
               <Option value='productDesc'>根据商品描述</Option>
             </Select>
-            <Input placeholder='关键字' style={{width: 200, marginLeft: 10, marginRight: 10}}/>
-            <Button type='primary'>搜索</Button>
+            <Input placeholder='关键字' style={{width: 200, marginLeft: 10, marginRight: 10}} onChange={e => this.handleChange('searchName', e.target.value)}/>
+            <Button type='primary' onClick={() => this.getProducts(1, 5)}>搜索</Button>
           </div>
         }
         extra={<Button type='primary' ><Icon type='plus'/>添加产品</Button>}
