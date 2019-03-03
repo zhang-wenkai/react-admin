@@ -2,10 +2,15 @@ import React, {Component} from 'react'
 import {Card, Button, Icon, Table, Select, Input, message} from 'antd'
 
 import MyButton from '../../components/my-button'
+import {reqProductsList} from '../../api'
 
 const Option = Select.Option
 
 export default class Index extends Component {
+  state = {
+    products: [],
+    total: 0
+  }
 
   componentWillMount () {
     this.columns = [
@@ -48,8 +53,26 @@ export default class Index extends Component {
     ]
   }
 
+  // 获取商品列表的方法
+  getProducts = async (pageNum, pageSize) => {
+    const result = await reqProductsList(pageNum, pageSize)
+
+    if (result.status === 0) {
+      this.setState({
+        products: result.data.list,
+        total: result.data.total
+      })
+    } else {
+      message.error('获取分页商品数据失败')
+    }
+  }
+
+  componentDidMount () {
+    this.getProducts(1, 5)
+  }
+
   render () {
-    const data = []
+    const {products,total} = this.state
     return (
       <Card
         title={
@@ -66,16 +89,19 @@ export default class Index extends Component {
       >
         <Table
           columns={this.columns}
-          dataSource={data}
+          dataSource={products}
           bordered
           pagination={{
             defaultPageSize: 5,
             showSizeChanger: true,
             pageSizeOptions: ['5', '10', '15', '20'],
-            showQuickJumper: true
+            showQuickJumper: true,
+            total,
+            onChange: this.getProducts,
+            onShowSizeChange: this.getProducts
           }}
           rowKey='_id'
-          loading={false}
+          loading={products.length === 0}
         />
       </Card>
     )
